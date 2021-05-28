@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Detroit Industry and class of work</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
+    <style>
+body { margin:0; padding:0; }
+#map { position:absolute; top:0; bottom:0; width:100%; }
+
+.map-overlay {
+    font: 12px/28px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    position: absolute;
+    width: 36%;
+    top: 100;
+    left: 110;
+    padding: 10px;
+}
+
+.map-overlay .map-overlay-inner {
+    background-color: #fff;
+    box-shadow:0 1px 2px rgba(0, 0, 0, 0.20);
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.map-overlay table {
+    border: none;
+    width: 100%;
+}
+
+.map-overlay h2 {
+    line-height: 24px;
+    display: block;
+    margin: 0 0 10px;
+}
+
+.map-overlay label {
+    font: 16px/18px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    vertical-align: bottom;
+    margin: 0;
+    padding: 0;
+}
+
+.map-overlay .legend .bar {
+    height: 10px;
+    width: 100%;
+    background: linear-gradient(to right, #FCA107, #7F3121);
+}
+
+.map-overlay input {
+    display: inline;
+    vertical-align: middle;
+    margin: 5px;
+    padding: 0;
+}
+
+.map-overlay p.credit {
+   margin: 5px 0 0 0;
+   padding: 0;
+}
+
+    </style>
+</head>
+<body>
+
+
+<div id='map'></div>
+
+<div class='map-overlay top'>
+    <div class='map-overlay-inner'>
+        <h2>Detroit Industry and class of work</h2>
+		<table><tr><td>
+  		<input type="radio" name="layers" id="layer1" value="TotalCivil" checked><label>Total &nbsp; &nbsp;</label>
+  		<input type="radio" name="layers" id="layer2" value="Production"><label>Production&nbsp; &nbsp;</label>
+        <input type="radio" name="layers" id="layer3" value="Service"><label>Service&nbsp; &nbsp;</label>
+        <input type="radio" name="layers" id="layer4" value="Service"><label>Natural resources</label>   
+     
+         </td>
+         </tr>
+         <tr><td><p class="cityfly">Zoom To: <a href="#" class="citylink" id="detroit">Detroit</a> &nbsp;<a href="#" class="citylink" id="chicago">Chicago</a>&nbsp;<a href="#" class="citylink" id="New York">New York</a>&nbsp;<a href="#" class="citylink" id="Houston">Houston</a>&nbsp;<a href="#" class="citylink" id="Los Angeles">Los Angeles</a> </p>
+         </td></tr>
+         </table>
+         
+</div>
+</div>
+
+
+
+
+    <script>
+
+
+    mapboxgl.accessToken = 'pk.eyJ1IjoieWFuZzkyMSIsImEiOiJja2hmNXlleWQwNGFuMnJtY2h4bzN0cnV6In0.yQYoys58OP_LShTG4PmdnQ'; // Put your Mapbox Public Access token here
+
+    // Load a new map in the 'map' HTML div
+    var map = new mapboxgl.Map({
+    container: 'map', // container id
+    style: 'mapbox://styles/yang921/ckos0p97z2rhe18p1npkw8xgs', // map background layer location
+    center: [-83, 42], // starting position [lng, lat] 
+    zoom: 3, // starting zoom
+    pitch: 50 // tilt of the viewpoint in degrees
+    });
+
+
+    map.on('load', function() {
+      // Set global light properties which influence 3D layer shadows
+      map.setLight({color: "#fff", intensity: 0.15, position: [1.15, 210, 30]});
+      // Add standard navigation control
+      map.addControl(new mapboxgl.NavigationControl());
+
+   
+ 
+        
+        
+    // Load the 3D employment hexagon layer as a fill-extrusion type
+      map.addLayer({
+        id: 'Total',
+        type: 'fill-extrusion',
+        source: {
+          type: 'vector',
+          url: 'mapbox://yang921.0uc86j7l' // Your Mapbox tileset Map ID
+        },
+        'source-layer': '2019-5aywk4', // name of tileset
+        paint: {
+            'fill-extrusion-color': {
+                property: 'TotalCivil',
+                type: 'exponential',
+                stops: [
+                    [0, '#d6f5ff'],
+                    [50000, '#69cbf5'],
+                    [100000, '#2e96dc'],
+                    [4000000, '#00479e']]
+            },
+            'fill-extrusion-height':  ['get', 'TotalCivil'],  //expression that controls the extrusion height based on employment attribute Emp2011
+            'fill-extrusion-opacity': 0.95,
+            'fill-extrusion-opacity-transition': {  //Opacity transition adds a delay when changing the opacity for a smooth layer change effect
+                 duration: 1000,
+                 delay: 0
+             }
+            }
+      });
+
+    // Load the second 3D population hexagon layer. This layer has its opacity set to zero.
+      map.addLayer({
+        id: 'Production',
+        type: 'fill-extrusion',
+        source: {
+          type: 'vector',
+          url: 'mapbox://yang921.0uc86j7l' // Your Mapbox tileset Map ID
+        },
+        'source-layer': '2019-5aywk4', // name of tileset
+        paint: {
+            'fill-extrusion-color': {
+                property: 'Production',
+                type: 'exponential',
+                stops: [
+                    [0, '#fff2f2'],
+                    [5000, '#f59c8e'],
+                    [10000, '#e54545'],
+                    [30000, '#730b0b']]
+            },
+             'fill-extrusion-height':  ['*', ['number', ['get', 'Production'], 2], 2], 
+            'fill-extrusion-opacity': 0,  //Opacity set to zero
+            'fill-extrusion-opacity-transition': {
+                 duration: 1000,
+                 delay: 0
+             }
+            }
+      });
+
+        //Load the third 3D population hexagon layer. This layer has its opacity set to zero.
+        
+         map.addLayer({
+        id: 'Service',
+        type: 'fill-extrusion',
+        source: {
+          type: 'vector',
+          url: 'mapbox://yang921.0uc86j7l' // Your Mapbox tileset Map ID
+        },
+        'source-layer': '2019-5aywk4', // name of tileset
+        paint: {
+            'fill-extrusion-color': {
+                property: 'Service',
+                type: 'exponential',
+                stops: [
+                    [0, '#fff2f2'],
+                    [5000, '#e3c27b'],
+                    [10000, '#d6ab4f'],
+                    [30000, '#9c7a33']]
+            },
+             'fill-extrusion-height':   ['get', 'Service'],
+            'fill-extrusion-opacity': 0,  //Opacity set to zero
+            'fill-extrusion-opacity-transition': {
+                 duration: 1000,
+                 delay: 0
+             }
+            }
+      });
+        
+        
+        
+         map.addLayer({
+        id: 'Natural re',
+        type: 'fill-extrusion',
+        source: {
+          type: 'vector',
+          url: 'mapbox://yang921.0uc86j7l' // Your Mapbox tileset Map ID
+        },
+        'source-layer': '2019-5aywk4', // name of tileset
+        paint: {
+            'fill-extrusion-color': {
+                property: 'Natural re',
+                type: 'exponential',
+                stops: [
+                    [0, '#fff2f2'],
+                    [5000, '#c9f0a8'],
+                    [10000, '#97c274'],
+                    [30000, '#71a14a']]
+            },
+             'fill-extrusion-height': ['*', ['number', ['get', 'Natural re'], 2], 2],
+            'fill-extrusion-opacity': 0,  //Opacity set to zero
+            'fill-extrusion-opacity-transition': {
+                 duration: 1000,
+                 delay: 0
+             }
+            }
+      });
+        
+        
+        
+        
+        
+        
+// Add the label layer
+	map.addLayer({
+		'id': 'labels',
+		'type': 'symbol',
+        source: {
+          type: 'vector',
+          url: 'http://yang921.0uc86j7l' // Your Mapbox tileset Map ID
+        },
+		'source-layer': '2019-5aywk4', // name of tilesets
+		'layout': {
+			'text-field': '{Name2}',
+			'text-font': ['Open Sans Bold', 'Arial Unicode MS Bold'],
+			'text-size': 14
+		},
+		'paint': {
+			'text-color': 'rgba(192,192,192,0.8)',
+			'text-halo-color': '#fff',
+			'text-halo-width': 1
+		}
+	});
+
+//Event listener for layer switch
+document.getElementById("layer1").addEventListener("click", function(){
+map.setPaintProperty('Total','fill-extrusion-opacity',0.95);
+map.setPaintProperty('Production','fill-extrusion-opacity',0);
+map.setPaintProperty('Service','fill-extrusion-opacity',0);
+map.setPaintProperty('Natural re','fill-extrusion-opacity',0);
+});
+
+document.getElementById("layer2").addEventListener("click", function(){
+map.setPaintProperty('Total','fill-extrusion-opacity',0);
+map.setPaintProperty('Production','fill-extrusion-opacity',0.95);
+map.setPaintProperty('Service','fill-extrusion-opacity',0);
+map.setPaintProperty('Natural re','fill-extrusion-opacity',0);
+
+});
+
+document.getElementById("layer3").addEventListener("click", function(){
+map.setPaintProperty('Total','fill-extrusion-opacity',0);
+map.setPaintProperty('Production','fill-extrusion-opacity',0);
+map.setPaintProperty('Service','fill-extrusion-opacity',0.95);
+map.setPaintProperty('Natural re','fill-extrusion-opacity',0);
+
+});
+  
+document.getElementById("layer4").addEventListener("click", function(){
+map.setPaintProperty('Total','fill-extrusion-opacity',0);
+map.setPaintProperty('Production','fill-extrusion-opacity',0);
+map.setPaintProperty('Service','fill-extrusion-opacity',0);
+map.setPaintProperty('Natural re','fill-extrusion-opacity',0.95);
+
+});
+       
+
+//Event listener for the zoom to buttons created using a for loop and switch case statement to set lat and long
+var x = document.getElementsByClassName('citylink');
+var i;
+		for (i = 0; i < x.length; i++) {
+			x[i].addEventListener('click', function(e) {
+
+				var lat,long;
+
+				switch(e.target.id) {
+					case "detroit": long=-83; lat=42; break;
+					case "chicago": long=-87.6; lat=41.8; break;
+                    case "New York": long=-84; lat=40; break;
+                    case "Houston": long=-95; lat=30; break;
+				    case "Los Angeles": long=-118; lat=34; break;
+				}
+
+				map.flyTo({
+					center: [long,lat],
+					zoom: 6,
+					speed: 0.3,
+					pitch: 50
+					});
+			});
+		}
+
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- navbar section -->
+    <nav class="navbar">
+        <div class="navbar__container">
+            <a href="home" id = "navbar__logo">Detroit</a>
+            <div class="navbar__toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+        </div>       
+        <ul class="navbar__menu">
+          <li class="navbar__item">
+            <a href="#A" class="navbar__links" id="A-page">About</a>   
+         </li>
+            <li class="navbar__item">
+               <a href="#B" class="navbar__links" id="B-page">National Distribution</a>   
+            </li>
+            <li class="navbar__item">
+                <a href="#C" class="navbar__links" id="C-page">Pop and Econ</a>   
+             </li>
+             <li class="navbar__item">
+                <a href="#D" class="navbar__links" id="D-page">Urban Transformation</a>   
+             </li>
+             <li class="navbar__item">
+                <a href="#E" class="navbar__links" id="E-page">Future Path</a>   
+             </li>
+        </ul>
+        </div>
+    </nav>
+    
+
+   <!-- Hero Section -->
+   <div class="hero" id="home">
+    <div class="hero__container">
+      <h1 class="hero__heading">Shrinking City----Detroit</span>  </h1>
+      
+      <button class="main__btn"><a href="#A">Explore</a></button>
+    </div>
+  </div>
+
+  <!-- About Section -->
+<section id="A" class="main">
+  <div class="main__container">
+    <div class="main__img--container">
+        
+    </div>
+    <div class="main__content">
+      <h1>Introduction</h1>
+        
+      <img src="Detroit-Michigan.jpeg" alt=“Detroit_pic” class="picPos"> 
+      <p class="hero__description">The aim of our project is to use data visualisation techniques to analyse the reasons why Detroit's city has shrunk dramatically in size. 
+          Thanks to the booming automotive industry, Detroit was once the fourth largest city in the country. But since the 1970s, the US has no longer been dominant and the Japanese 
+          and European automotive industries have recovered from the devastation of the Second World War. 
+          We will look at the national distribution of shrinking cities in the United States, The relationship between population and economy in Detroit,
+           Urban Transformation in Detroit, Detroit's Future Urban Development Path, etc</p>
+     <div>
+  </div> 
+ </div>    
+</section>
+
+<section id="B">
+  <iframe src="NationalDistribution/NationalDistribution.html" height="1008px" width="100%" frameBorder="0" scrolling="no"></iframe>
+</section> 
+
+<section id="C">
+  <iframe src="PopandEcon/GDPline.html" height="1008px" width="100%" frameBorder="0" scrolling="no"></iframe>
+  <iframe src="PopandEcon/UmPeBar.html" height="1008px" width="100%" frameBorder="0" scrolling="no"></iframe>
+  <iframe src="PopandEcon/Population.html" height="1008px" width="100%" frameBorder="0" scrolling="no"></iframe>
+
+  <section id="D">
+    <iframe src="UrbanTransformation/UrbanTransformation.html" height="1008px" width="100%" frameBorder="0" scrolling="no"></iframe>
+  </section>  
+  
+<section id="E">
+    <iframe src="FuturePlan/FuturePlan.html" height="1008px" width="100%" frameBorder="0" scrolling="no"></iframe>
+</section>      
+
+
+
+</section>  
+      
+  <script src="app.js"> </script>
+</body>
+</html>

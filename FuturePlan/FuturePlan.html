@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Title</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+    <script charset="utf-8" src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/dimple/2.3.0/dimple.latest.min.js"></script>
+    <script type="text/javascript" src="https://lib.baomitu.com/echarts/4.9.0-rc.1/echarts.js"></script>
+    <script type="text/javascript" src="data2.js"></script>
+    <script type="text/javascript" src="data3.js"></script>
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      #map {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      .top {
+        position: absolute;
+        top: 4%;
+        left: 35%;
+        display: flex;
+        justify-content: space-around;
+        width: 400px;
+        opacity: 0.8;
+      }
+
+      .top1, .top2{
+        padding: 10px 40px;
+      }
+
+      .top span {
+        display: inline-block;
+        width: 100px;
+        background: rgb(255, 255, 255);
+        text-align: center;
+        border-radius: 4px;
+        border: 1px solid black;
+      }
+
+      .top span:hover {
+        cursor: pointer;
+      }
+
+      .right-wrapper-data2, .right-wrapper-data3{
+        position: absolute;
+        right: 0;
+        width: 400px;
+        height: 100%;
+        background: rgba(255, 255, 255, 1);
+        z-index: 2;
+        padding: 10px;
+        overflow-y: scroll;
+        opacity: 0.7;
+      }
+
+      .right-wrapper-data2 .data2-type{
+        display: flex;
+        justify-content: space-around;
+        margin: 10px 0;
+      }
+
+      .right-wrapper-data2 .data2-type span{
+        padding: 2px 5px;
+        border-radius: 3px;
+      }
+      .right-wrapper-data2 .data2-type span:hover{
+        cursor: pointer;
+      }
+
+      .legend2, .legend3{
+        font-size: 13px;
+        margin-top: 20px;
+      }
+
+      .legend-list{
+        margin-bottom: 10px;
+      }
+
+      .legend-list-title:hover{
+        cursor: pointer;
+      }
+
+      .polygon-mark{
+        width: 10px;
+        height: 10px;
+        display: inline-block;
+        margin-right: 5px;
+      }
+
+      .right-wrapper-data2 .echart-view-data2{
+        width: 100%;
+        height: 200px;
+        background: rgba(255,255,255,0.4);
+        display: flex;
+      }
+
+      .right-wrapper-data2 .echart-view-data2 .rrr {
+        flex: 1;
+      }
+      .right-wrapper-data2 .echart-view-data2 .rrr .chart{
+        width: 100%;
+        height: 70%;
+      }
+
+      .right-wrapper-data3 .echart-view-data3-title{
+        /* width: 100%;
+        height: 200px;
+        background: rgba(255,255,255,0.4); */
+        display: flex;
+        justify-content: space-between;
+        color: rgb(70, 70, 70);
+      }
+
+      .right-wrapper-data3 .echart-view-data3{
+        width: 100%;
+        height: 200px;
+        background: rgba(255,255,255,0.4);
+        display: flex;
+      }
+
+      .right-wrapper-data3 .echart-view-data3 .rrr {
+        flex: 1;
+      }
+      .right-wrapper-data3 .echart-view-data3 .rrr .chart{
+        width: 100%;
+        height: 70%;
+      }
+
+      .legend2-describtion, .legend3-describtion{
+        overflow: scroll;
+        padding-bottom: 20px;
+      }
+
+      .legend-list-title-all2:hover, .legend-list-title-all3:hover{
+        cursor: pointer;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div class="top">
+      <span class="top1">EXISTING FRAMEWORK ZONES</span>
+      <span class="top2">FUTURE LAND USE SCENARIO</span>
+    </div>
+    <div class="right-wrapper-data2">
+      <div style="padding: 10px 0">
+        The land use scenario is built from the land use typologies.
+        There are three major categories of land use typologies: Neighborhoods,
+        Industrial, and Landscape. Within each of these major categories is a
+        range of potential typologies, each providing the vision for returning
+        vacant land to productive uses.
+      </div>
+      <div class="data2-type">
+        <span class="data2-type-1">2030</span>
+        <span class="data2-type-2">2050</span>
+      </div>
+      <div class="legend2">
+        <div class="legend2-legend" style="text-align: right;margin-bottom: 10px;">2030 LAND USE SCENARIO</div>
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend2-list-1'>NEIGHBORHOOD LAND USE TYPOLOGIES: RESIDENTIAL</div>
+          <div><span class='polygon-mark' style="background-color:rgb(166, 255, 0)"></span ><span>GREEN RESIDENTIAL</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(249, 253, 0)"></span ><span>TRADITIONAL LOW DENSITY RESIDENTIAL</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(255, 174, 0)"></span><span>TRADITIONAL MEDIUM DENSITY RESIDENTIAL</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(255, 94, 0)"></span><span>GREEN MIXED-RISE</span></div>
+        </div>
+
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend2-list-2'>NEIGHBORHOOD LAND USE TYPOLOGIES: MIXED-USE</div>
+          <div><span class='polygon-mark' style="background-color:rgb(255, 1, 1)"></span ><span>CITY CENTER</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(218, 94, 94)"></span ><span>DISTRICT CENTER</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(255, 0, 128)"></span><span>LIVE+MAKE</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(223, 0, 253)"></span><span>NEIGHBORHOOD CENTER</span></div>
+        </div>
+
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend2-list-3'>INDUSTRIAL LAND USE TYPOLOGIES</div>
+          <div><span class='polygon-mark' style="background-color:rgb(4, 255, 255)"></span ><span>GENERAL INDUSTRIAL</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(108, 0, 250)"></span ><span>HEAVY INDUSTRIAL</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(28, 3, 248)"></span><span>LIGHT INDUSTRIAL</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(6, 26, 53)"></span><span>UTILITIES</span></div>
+        </div>
+
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend2-list-4'>LANDSCAPE LAND USE TYPOLOGIES</div>
+          <div><span class='polygon-mark' style="background-color:rgb(53, 243, 16)"></span ><span>LARGE PARK</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(22, 68, 53)"></span ><span>INNOVATION PRODUCTIVE</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(9, 228, 144)"></span><span>INNOVATION ECOLOGICAL</span></div>
+        </div>
+
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend2-list-5'><span class='polygon-mark' style="background-color:rgb(175, 185, 189)"></span ><span>CEMETERY </span></div>
+        </div>
+
+        
+
+      </div>
+      <div class="legend2-describtion"></div>
+    </div>
+    <div class="right-wrapper-data3">
+      <div style="padding: 10px 0">
+        The Framework Zones were developed through extensive research and analysis of the city's physical and market conditions. The composite mapping is framed around degrees of existing and anticipated vacancy throughout the city.
+      </div>
+      <div class="legend3">
+        <div style="text-align: right;margin-bottom: 10px;">FRAMEWORK ZONES</div>
+
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend3-list-1'><span class='polygon-mark' style="background-color:rgb(2, 166, 241)"></span ><span>GREATER DOWNTOWN </span></div>
+        </div>
+
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend3-list-2'>LOW-VACANCY</div>
+          <div><span class='polygon-mark' style="background-color:rgb(206, 137, 137)"></span ><span>LOW-VACANCY 1</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(99, 25, 25)"></span ><span>LOW-VACANCY 2</span></div>
+        </div>
+
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend3-list-3'>MODERATE-VACANCY</div>
+          <div><span class='polygon-mark' style="background-color:rgb(247, 103, 7)"></span ><span>MODERATE-VACANCY 1</span></div>
+          <div><span class='polygon-mark' style="background-color:rgb(226, 197, 31)"></span ><span>MODERATE-VACANCY 2</span></div>
+        </div>
+
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend3-list-4'><span class='polygon-mark' style="background-color:rgb(95, 55, 187)"></span ><span>HIGH-VACANCY </span></div>
+        </div>
+
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend3-list-5'><span class='polygon-mark' style="background-color:rgb(248, 3, 126)"></span ><span>INDUSTRIAL LAND USE CHANGE</span></div>
+        </div>
+
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend3-list-6'><span class='polygon-mark' style="background-color:rgb(253, 7, 7)"></span ><span>INDUSTRIAL LAND USE STRENGTH</span></div>
+        </div>
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend3-list-7'><span class='polygon-mark' style="background-color:rgb(4, 245, 36)"></span ><span>MAJOR PARKS</span></div>
+        </div>
+        <div class='legend-list'>
+          <div class='legend-list-title' id='legend3-list-8'><span class='polygon-mark' style="background-color:rgb(175, 185, 189)"></span ><span>CEMETERY</span></div>
+        </div>
+       
+      </div>
+      <div class="echart-view-data3-title">.</div>
+      <div class="echart-view-data3">
+        <div class="rrr">
+          <div id='echart-view-data3-chart1' class="chart"></div>
+          <div class='echart-view-data3-chart1-title' style="text-align: center;font-size: 12px; color: grey;"></div>
+        </div>
+        <div class="rrr">
+          <div id='echart-view-data3-chart2' class="chart"></div>
+          <div class='echart-view-data3-chart2-title' style="text-align: center;font-size: 12px;color: grey;"></div>
+        </div>
+        <div class="rrr">
+          <div id='echart-view-data3-chart3' class="chart"></div>
+          <div class='echart-view-data3-chart3-title' style="text-align: center;font-size: 12px;color: grey;"></div>
+        </div>
+      </div>
+      <div class="legend3-describtion"></div>
+    </div>
+    <script>
+       const legendMapping = {
+        'GREATER DOWNTOWN': `<div>GREATER DOWNTOWN is broken out as a separate framework zone due to its role as the commercial core of the city and its unique physical form and zoning, which support higher densities and mixed-use development. It is characterized by moderate amounts of land and building vacancy. As a result, it has the highest capacity for increased commercial and residential growth due to significant amounts of buildable land and an existing multi-story building fabric. Greater Downtown has the strongest market demand in the city for additional residential and commercial uses. It also has low rates of foreclosure, relative to the rest of the city.</div>`,
+
+        'LOW-VACANCY': `<div>LOW-VACANCY 1 neighborhoods have very low land and building vacancy. They also have the strongest residential markets relative to the rest of the city. Despite falling market values, they have maintained steady demand, accounting for their low-vacancy rates. Relative to the rest of the city they have had lower rates of home foreclosure. They include many of the city’s historic districts.</div>
+        <div>LOW-VACANCY 2 neighborhoods have low land and building vacancy and by all appearances retain their identity as intact traditional residential neighborhoods. However, the residential markets in these areas have shown elevated rates of home vacancy as well as high rates of home foreclosure. Falling home values and weakening demand have made them vulnerable to future depopulation and increased vacancy.</div>`,
+  
+        'MODERATE-VACANCY': `<div>MODERATE-VACANCY 1 neighborhoods have moderate land and building vacancy. The traditional residential fabric in these neighborhoods is punctuated by interspersed vacant land and buildings. Market conditions in most instances are weak, showing vulnerability with low demand and high foreclosure rates. Many Moderate-Vacancy 1 areas, due to their proximity to Low-Vacancy neighborhoods, show greater potential for stabilization than Moderate-Vacancy 2 areas.</div>
+        <div>MODERATE-VACANCY 2 neighborhoods show an extreme variation of vacancy conditions from moderate to high. As a result, many Moderate-Vacancy 2 areas are on the verge of losing their largely residential character. These areas have weak residential markets with very low demand and high foreclosure rates. They tend to be located adjacent to areas of High-Vacancy.</div>`,
+
+        'HIGH-VACANCY': `HIGH-VACANCY neighborhoods have very high rates of both land and building vacancy. These areas have largely lost their residential character. Residential structures are often isolated in a larger field of maintained or unmaintained vacant land. These areas have experienced high rates of illegal dumping and other forms of neglect. They exhibit very weak to no market outside of speculative land purchases adjacent to key city assets. A very high percentage of vacant land in High-Vacancy areas is in public ownership.`,
+
+        'INDUSTRIAL LAND USE CHANGE': `INDUSTRIAL LAND USE CHANGE areas are formerly industrial corridors and nodes in Detroit where an industrial critical mass is gone, or nearly so. The topography of viable industrial activity in Detroit has evolved in tandem with technological advances and market globalization, and these changes are reflected in industrial firms’ individual and collective land use decisions. As a result, certain areas once appropriate for industrial use are no longer so and should be reassessed and ultimately transitioned to land uses more beneficial to Detroit communities.`,
+
+        'INDUSTRIAL LAND USE STRENGTH': `INDUSTRIAL LAND USE STRENGTH areas contain Detroit's industrial lands that hold the most promise for productive use going forward. At the heart of these zones lie Detroit’s strongest and most diverse existing industrial nodes, which act as anchors for other industrial and commercial activity. These areas combine higher employment density with good infrastructure access, a variety of appropriate development sites, and buffering from residential land uses. These corridors have the best potential for meeting the needs of current and future advanced and traditional industrial sectors.`,
+
+        'NEIGHBORHOOD LAND USE TYPOLOGIES: RESIDENTIAL': `<div>GREEN RESIDENTIAL areas illustrate one of the more profound ways in which Detroit may become a leader in sustainable land use, responding to neighborhood disinvestment and population loss by creating a new urban identity integrated with landscape. The Green Residential typology proposes transformed, landscape-based neighborhoods that transform Detroit’s vacant and underutilized land into a canvas of green, supporting single- and multi-family residential along with community-maintained recreational spaces, productive landscapes, and blue/green infrastructure. </div>
+
+        <div>GREEN RESIDENTIAL TRANSITIONAL use shares the same set of strategic interventions as the Green Residential typology, but defers city systems renewal decisions until residential densities have achieved long-term stability.</div>
+
+        <div>TRADITIONAL LOW-DENSITY defines several of Detroit's historic districts. The predominant housing type in these areas is the detached single-family house on a 45-foot-wide (or larger) parcel, placed within a range of urban grids or lower-density meandering suburban streets. A limited mix of commercial retail types may be located at the periphery. Public space is provided by neighborhood parks, schools, or recreation centers. Future development of a similar size and scale should be reviewed carefully to confirm sustainable densities, and suitable cost/ revenue ratio to provide services. Traditional Low-Density neighborhoods rely upon relatively better market strength compared with other Detroit neighborhoods, and have correspondingly higher taxable valuable and revenues to sustain cost-effective delivery of services.</div>
+        <div>TRADITIONAL MEDIUM-DENSITY areas are primarily residential, with peripheral retail and other commercial uses. Traditional medium-density areas typify the dominant residential pattern throughout the city. The predominant housing type is the detached single-family house on a 30- to 45-footwide parcel within a conventional urban street grid, but may also include attached duplex and townhouse structures. A mix of retail types is located in commercial strips or nodes at the periphery of these neighborhoods. Public space is provided by neighborhood parks, schools, or recreation centers. At full density, Traditional Medium-Density Residential neighborhoods maintain a sustainable cost to provide services.</div>
+
+        <div>GREEN MIXED-RISE presents an innovative new residential neighborhood that combines medium- and high-density multi-family housing (both low- and high-rise) within a landscape setting. This landscape context can favor more productive characteristics (such as community gardens and forests), or more ecological characteristics (such as blue and green infrastructures and new urban habitats). Commercial retail and employment may be interspersed within the development area or at the periphery along corridors. Green Mixed-Rise neighborhoods demonstrate a unique way for Detroit to incorporate and attract greater density by capitalizing on existing physical assets– such as the east riverfront, and especially areas susceptible to flooding—while fostering a more symbiotic relationship with the natural environment. The relatively high density of the Green Mixed-Rise neighborhood achieves a low cost to provide services.</div>
+        `,
+
+        'NEIGHBORHOOD LAND USE TYPOLOGIES: MIXED-USE': `<div>NEIGHBORHOOD CENTERS are vibrant mixed-use environments that are hubs for commercial, community, and recreational activities for adjacent residential areas. These neighborhoods incorporate a limited mix of commercial employment and retail uses, and support a diverse range of residential housing types from multi-family to townhouse to detached single-family. Neighborhood retail is integrated into the residential fabric in nodes or along commercial strips. Public spaces include neighborhood parks or squares, as well as integrated landscapes. Schools, recreation centers, libraries, cultural centers, or places of worship provide institutional anchors.</div>
+
+        <div>DISTRICT CENTERS are active, medium-to-high density, mixed-use areas that provide an even split of residential and employment uses. They are typically anchored by a major commercial or institutional employer such as a university or medical center. Residential areas incorporate a mix of housing types from multifamily to townhouse to detached single-family. Multiple medium-density residential neighborhoods typically surround a District Center. District and neighborhood center retail types cater to resident and employee populations. Major civic cultural institutions and public spaces provide regional and neighborhood destinations.</div>
+
+        <div>CITY CENTER is a dynamic mixed-use environment that functions as the city and region’s core for commercial and service employment. The typology supports dense multi-family apartment and loft residential to maintain a 24/7 mixed-use environment. A mix of retail types caters to its diverse employee, resident, and visitor populations. Major civic public spaces provide regional destinations for events and recreation.</div>
+
+        <div>LIVE+MAKE presents another opportunity for Detroit to become a change leader in innovative urban design. Repurposed historic industrial structures and land that fosters a blend of smaller scale, low-impact production activity is combined with a diversity of other land uses. This typology provides a framework for true live-work in Detroit by allowing artisanal and small manufacturing, fabrication, assembly, and workshop uses compatible with housing and retail. The scale of industrial use is relatively fine grained, with a range of overall forms, including occupying multistory, former industrial structures as well the development of new building types. Any adaptive reuse or new construction should be encouraged to have space set aside for productive activities.</div>
+        `,
+
+        'INDUSTRIAL LAND USE TYPOLOGIES': `<div>LIGHT INDUSTRIAL areas incorporate modern, light industrial uses that provide attractive environments for jobs and are compatible with nearby neighborhoods. They accommodate light industrial business and technology parks, food processing and wholesaling, advanced manufacturing, and research and development facilities on high-value urban land in an attractive, low-impact environment. Design guidelines, performance standards, and a percentage of by-right office uses would provide for an environment competitive with suburban business and technology parks, with the added advantage of proximity to educational and health assets located in the city. Low-impact light industrial users– fabricators, wholesalers, and small distributors—would be typical of the market for this typology, which features higher building coverages, urban street patterns, and small or subdivided lots.</div>
+
+        <div>GENERAL INDUSTRIAL areas incorporate the bulk of Detroit’s non-infrastructural industrial lands. They provide job centers to accommodate a wide range of production and distribution activities, buffered from other uses with blue/green infrastructure. The impact of the activities located here is lower than those found in heavy industrial areas, and many general industrial zones already abut residential neighborhoods. Higher building coverages, large lots, and building footprints and truck circulation areas are found in this zone, which comprises the most appropriate territory for retention and growth of modern industrial facilities. Urban design standards should be employed to achieve the quality business environment required to make these sites more competitive and marketable. Manufacturing, processing, wholesale, and distribution uses with moderate noise, vibration, odor, and traffic impacts would be typical in this zone.</div>
+
+        <div>HEAVY INDUSTRIAL districts accommodate high-impact industrial activity isolated from other residential and commercial uses. Low building coverage– often lacking enclosed activity—accommodates industrial activity like storage tanks, pipelines, and material yards in this zone. Heavy industrial zones are more permissive of high impacts such as noise, vibration, odor, traffic, and activity in order to provide for functional and secure space in the city required by petrochemical tank farms, refineries, gasification plants, asphalt, and concrete plants. Additional areas for community-serving heavy industrial activities– including scrap yards, salvage yards, recycling, waste transfer and heavy equipment maintenance or repair—may be designated within existing industrial districts via a community planning process where necessary.</div>
+        `,
+
+        'LANDSCAPE LAND USE TYPOLOGIES': `<div>LARGE PARKS are traditional large open spaces across the city that provide recreational opportunities and environmental benefits locally and regionally. This typology includes parks, cemeteries, golf courses, and any other traditional landscapes 4 acres or greater in size. These public spaces are typically managed by the Detroit Recreation Department, but other organizations may contribute to programming and maintenance.</div>
+
+        <div>INNOVATION PRODUCTIVE areas are landscapes of innovation where productive development types predominate. These landscapes put vacant land to productive, active uses: growing food and productive forests, reducing maintenance costs, cleaning soil, generating new knowledge, and reshaping public perceptions of vacant land. These innovative landscapes primarily include flowering fields that clean contaminated soils, research plots to test ideas, urban farms with greenhouses or cultivated forests (silviculture), and aquaculture and algae-culture facilities. A portion of these areas is devoted to blue infrastructures to manage stormwater, and ecological landscapes are also found here as a tertiary use of innovation, where working+productive development types predominate. The minimum size would be 2 acres, with some large-scale commercial sites being potentially much larger.</div>
+
+        <div>INNOVATION ECOLOGICAL areas are landscapes of innovation, where ecological development types predominate. Here forests, meadows, and other landscapes develop gradually over time and cost very little (or nothing!) to “construct” and maintain. Flowering meadows gradually give way to forests, and the changing landscape supports a variety of plant and animal life, including birds like pheasants. These landscapes can develop on their own, or can be guided to different types of desirable landscapes, which may be especially suitable for a particular species, or more appropriate for stormwater management, or a quick-growing forest that shades out tall grasses and prevents them from growing, improving visibility and eliminating need for mowing. A portion of these areas is devoted to blue infrastructures to manage stormwater, and working+productive landscape development types are also found here as a tertiary use, occupying no more than 10% of the land area not allocated to blue infrastructure.</div>
+        `,
+      };
+      const App = {
+        init: function () {
+          $(".right-wrapper-data2").css("display", "none");
+          $(".right-wrapper-data3").css("display", "block");
+          $(".top1").css("background-color", "skyblue");
+          this.dataType = 'data3';
+          this.dataGeoJsontype = 'ZONE_';
+          // this.data2Metrics = ['data2_metrics1', 'data2_metrics2', 'data2_metrics3', 'data2_metrics4', 'data2_metrics5'];
+          this.data2Metrics = [];
+          // this.data3Metrics = ['data3_metrics1', 'data3_metrics2', 'data3_metrics3', 'data3_metrics4', 'data3_metrics5', 'data3_metrics6', 'data3_metrics7', 'data3_metrics8'];
+          this.data3Metrics = [];
+          this.data2MetricsAll = {
+              data2_metrics1: [
+                  {
+                      metric: 'GR',
+                      color: 'rgb(166, 255, 0)'
+                  },
+                  {
+                      metric: 'GR*',
+                      color: 'rgb(166, 255, 0)'
+                  },
+                  {
+                      metric: 'LDR',
+                      color: 'rgb(249, 253, 0)'
+                  },
+                  {
+                      metric: 'MDR',
+                      color: 'rgb(255, 174, 0)'
+                  },
+                  {
+                      metric: 'GMR',
+                      color: 'rgb(255, 94, 0)'
+                  }
+              ],
+              data2_metrics2: [
+                  {
+                      metric: 'CC',
+                      color: 'rgb(255, 1, 1)'
+                  },
+                  {
+                      metric: 'DC',
+                      color: 'rgb(218, 94, 94)'
+                  },
+                  {
+                      metric: 'LM',
+                      color: 'rgb(255, 0, 128)'
+                  },
+                  {
+                      metric: 'NC',
+                      color: 'rgb(223, 0, 253)'
+                  }
+              ],
+              data2_metrics3: [
+                  {
+                      metric: 'IG',
+                      color: 'rgb(4, 255, 255)'
+                  },
+                  {
+                      metric: 'IH',
+                      color: 'rgb(108, 0, 250)'
+                  },
+                  {
+                      metric: 'IL',
+                      color: 'rgb(28, 3, 248)'
+                  },
+                  {
+                      metric: 'IU',
+                      color: 'rgb(6, 26, 53)'
+                  }
+              ],
+              data2_metrics4: [
+                  {
+                      metric: 'LP',
+                      color: 'rgb(53, 243, 16)'
+                  },
+                  {
+                      metric: 'IP',
+                      color: 'rgb(22, 68, 53)'
+                  },
+                  {
+                      metric: 'IE',
+                      color: 'rgb(9, 228, 144)'
+                  }
+              ],
+              data2_metrics5: [
+                  {
+                      metric: 'CEM',
+                      color: 'rgb(175, 185, 189)'
+                  },
+              ]
+          },
+          this.data3MetricsAll = {
+              data3_metrics1: [
+                  {
+                      metric: 'GDT',
+                      color: 'rgb(2, 166, 241)'
+                  } 
+              ],
+              data3_metrics2: [
+                  {
+                      metric: 'LV1',
+                      color: 'rgb(206, 137, 137)'
+                  },
+                  {
+                      metric: 'LV2',
+                      color: 'rgb(99, 25, 25)'
+                  }
+              ],
+              data3_metrics3: [
+                  {
+                      metric: 'MV1',
+                      color: 'rgb(247, 103, 7)'
+                  },
+                  {
+                      metric: 'MV2',
+                      color: 'rgb(226, 197, 31)'
+                  }
+              ],
+              data3_metrics4: [
+                  {
+                      metric: 'HV',
+                      color: 'rgb(95, 55, 187)'
+                  }
+              ],
+              data3_metrics5: [
+                  {
+                      metric: 'IC',
+                      color: 'rgb(248, 3, 126)'
+                  },
+              ],
+              data3_metrics6: [
+                  {
+                      metric: 'IS',
+                      color: 'rgb(253, 7, 7)'
+                  },
+              ],
+              data3_metrics7: [
+                  {
+                      metric: 'MP',
+                      color: 'rgb(4, 245, 36)'
+                  },
+              ],
+              data3_metrics8: [
+                  {
+                      metric: 'CEM',
+                      color: 'rgb(175, 185, 189)'
+                  },
+              ],
+          }
+          this.dataMetricsAll = this.data3MetricsAll;
+          this.dataMetrics = this.data3Metrics;
+          this.data = data3;
+          this.initMap();
+          this.bindEvents();
+          this.initChart3(21, 32, 5);
+          this.renderChartTitle('HOUSING VACANCY', 'VACANT PARCELS: PUBLICLY OWNED', 'LAND AREA');
+          $(".echart-view-data3-title").html('<div>POPULATION: 45,279</div> <div>MEAN INCOME: $32.652</div>');
+          $(".legend3-describtion").html(legendMapping['GREATER DOWNTOWN']);
+          $(".legend2-describtion").html(legendMapping['NEIGHBORHOOD LAND USE TYPOLOGIES: RESIDENTIAL']);
+        },
+        initMap: function () {
+          mapboxgl.accessToken = "pk.eyJ1IjoidWNmbmhlbiIsImEiOiJja2x1Njg1cjMwMWVpMm9xbHM1ZW00MG9sIn0.W-ZPMO8all-8rO3ahmwWMQ";
+          this.map = new mapboxgl.Map({
+            container: "map",
+            style: 'mapbox://styles/mapbox/dark-v10',
+            center: [-83.0722295646048, 42.412196465741],
+            zoom: 11,
+            pitch: 0,
+          });
+          $(".data2-type-1").css("background-color", "skyblue");
+          this.map.on('load', () => {
+            this.addLayer(this.dataMetrics);
+          });
+        },
+        initChart3: function (val1, val2, val3) {
+          echarts.init(document.getElementById('echart-view-data3-chart1')).dispose();
+          echarts.init(document.getElementById('echart-view-data3-chart2')).dispose();
+          echarts.init(document.getElementById('echart-view-data3-chart3')).dispose();
+          if (val2) {
+            this.myData3Chart1 = echarts.init(document.getElementById('echart-view-data3-chart1'));
+            const option1 = {
+                title: {
+                text: `${val1}%`,
+                textStyle: {
+                  color: '#28BCFE',
+                  fontSize: 16
+                },
+                itemGap: 20,
+                left: 'center',
+                top: '40%'
+              },
+              tooltip: {
+                  formatter: function (params) {
+                    return '<span style="color: #fff;">21%</span>';
+                  }
+              },
+              angleAxis: {
+                max: 100,
+                clockwise: true, 
+                show: false
+              },
+              radiusAxis: {
+                    type: 'category',
+                    show: true,
+                    axisLabel: {
+                        show: false,
+                    },
+                    axisLine: {
+                        show: false,
+
+                    },
+                    axisTick: {
+                        show: false
+                    },
+              },
+              polar: {
+                center: ['50%', '50%'],
+                radius: '140%' 
+              },
+              series: [{
+                type: 'bar',
+                data: [21],
+              showBackground: true,
+              backgroundStyle: {
+                color: '#BDEBFF',
+              },
+                coordinateSystem: 'polar',
+                roundCap: true,
+                barWidth: 10,
+                itemStyle: {
+                    normal: {
+                    opacity: 1,
+                    color:  new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: '#25BFFF'
+                      }, {
+                        offset: 1,
+                        color: '#5284DE'
+                      }]),
+                    shadowBlur: 5,
+                    shadowColor: '#2A95F9',
+                }
+                },
+              }]
+            };
+            this.myData3Chart1.setOption(option1);
+          }
+          if (val2) {
+            this.myData3Chart2 = echarts.init(document.getElementById('echart-view-data3-chart2'));
+            const option2 = {
+                title: {
+                text: `${val2}%`,
+                textStyle: {
+                  color: '#28BCFE',
+                  fontSize: 16
+                },
+                itemGap: 20,
+                left: 'center',
+                top: '40%'
+              },
+              tooltip: {
+                  formatter: function (params) {
+                    return '<span style="color: #fff;">21%</span>';
+                  }
+              },
+              angleAxis: {
+                max: 100,
+                clockwise: true, 
+                
+                show: false
+              },
+              radiusAxis: {
+                    type: 'category',
+                    show: true,
+                    axisLabel: {
+                        show: false,
+                    },
+                    axisLine: {
+                        show: false,
+
+                    },
+                    axisTick: {
+                        show: false
+                    },
+              },
+              polar: {
+                center: ['50%', '50%'],
+                radius: '140%' 
+              },
+              series: [{
+                type: 'bar',
+                data: [21],
+              showBackground: true,
+              backgroundStyle: {
+                color: '#BDEBFF',
+              },
+                coordinateSystem: 'polar',
+                roundCap: true,
+                barWidth: 10,
+                itemStyle: {
+                    normal: {
+                    opacity: 1,
+                    color:  new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: '#25BFFF'
+                      }, {
+                        offset: 1,
+                        color: '#5284DE'
+                      }]),
+                    shadowBlur: 5,
+                    shadowColor: '#2A95F9',
+                }
+                },
+              }]
+            };
+            this.myData3Chart2.setOption(option2);
+          }
+          if (val3) {
+            this.myData3Chart3 = echarts.init(document.getElementById('echart-view-data3-chart3'));
+            const option3 = {
+                title: {
+                text: `${val3}%`,
+                textStyle: {
+                  color: '#28BCFE',
+                  fontSize: 16
+                },
+                itemGap: 20,
+                left: 'center',
+                top: '40%'
+              },
+              tooltip: {
+                  formatter: function (params) {
+                    return '<span style="color: #fff;">21%</span>';
+                  }
+              },
+              angleAxis: {
+                max: 100,
+                clockwise: true,
+                show: false
+              },
+              radiusAxis: {
+                    type: 'category',
+                    show: true,
+                    axisLabel: {
+                        show: false,
+                    },
+                    axisLine: {
+                        show: false,
+
+                    },
+                    axisTick: {
+                        show: false
+                    },
+              },
+              polar: {
+                center: ['50%', '50%'],
+                radius: '140%' 
+              },
+              series: [{
+                type: 'bar',
+                data: [21],
+              showBackground: true,
+              backgroundStyle: {
+                color: '#BDEBFF',
+              },
+                coordinateSystem: 'polar',
+                roundCap: true,
+                barWidth: 10,
+                itemStyle: {
+                    normal: {
+                    opacity: 1,
+                    color:  new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                        offset: 0,
+                        color: '#25BFFF'
+                      }, {
+                        offset: 1,
+                        color: '#5284DE'
+                      }]),
+                    shadowBlur: 5,
+                    shadowColor: '#2A95F9',
+                }
+                },
+              }]
+            };
+            this.myData3Chart3.setOption(option3);
+          }
+        },
+        addLayer: function(metrics){
+          const currentMetrics = [];
+          metrics.map((l, index) => {
+            currentMetrics.push(this.dataMetricsAll[l]);
+          });
+          this.removeAllLayer();
+          currentMetrics.flat(2).map((item, index) => {
+            this.map.addSource(`data${item.metric}`, {
+              type: "geojson",
+              data: {
+                type: "FeatureCollection",
+                features: this.data.features.filter((o) => o.properties[this.dataGeoJsontype] === item.metric)
+              },
+            });
+
+            this.map.addLayer({
+              id: `data${item.metric}`,
+              type: "fill",
+              source: `data${item.metric}`,
+              layout: {},
+              paint: {
+                "fill-color": item.color,
+                "fill-opacity": 0.5,
+              },
+            });
+          })     
+        },
+        removeAllLayer: function(){
+          const list = ['GR', 'GR*', 'LDR', 'MDR', 'GMR', 'CC', 'DC', 'LM', 'NC', 'IG', 'IH', 'IL', 'IU', 'LP', 'IP',
+          'IE', 'CEM',   'GDT', 'LV1', 'LV2', 'MV1', 'MV2', 'HV', 'IC', 'IS', 'MP'];
+            list.forEach((o, index) => {
+              if (this.map.getLayer(`data${o}`)) {
+                this.map.removeLayer(`data${o}`);
+              }
+              if (this.map.getSource(`data${o}`)) {
+                this.map.removeSource(`data${o}`);
+              }
+            })
+        },
+        renderLayer: function(type) {
+          if (type) {
+            if (this.dataMetrics.includes(type)) {
+              this.dataMetrics.splice(this.dataMetrics.indexOf(type), 1)
+            } else {
+              this.dataMetrics.push(type);
+            }
+          }
+          this.addLayer(this.dataMetrics);
+        },
+        renderChartTitle: function(title1, title2, title3){
+          $(".echart-view-data3-chart1-title").html(title1);
+          $(".echart-view-data3-chart2-title").html(title2);
+          $(".echart-view-data3-chart3-title").html(title3);
+        },
+        bindEvents: function () {
+
+          $(".legend-list-title-all2").click(() => {
+            this.data2Metrics = ['data2_metrics1', 'data2_metrics2', 'data2_metrics3', 'data2_metrics4', 'data2_metrics5'];
+            this.dataMetrics = this.data2Metrics;
+            this.renderLayer();
+          })
+          $(".legend-list-title-all3").click(() => {
+            this.data3Metrics = ['data3_metrics1', 'data3_metrics2', 'data3_metrics3', 'data3_metrics4', 'data3_metrics5', 'data3_metrics6', 'data3_metrics7', 'data3_metrics8'];
+            this.dataMetrics = this.data3Metrics;
+            this.renderLayer();
+          })
+
+
+          $("#legend2-list-1").click(() => {
+            this.renderLayer('data2_metrics1');
+            $(".legend2-describtion").html(legendMapping['NEIGHBORHOOD LAND USE TYPOLOGIES: RESIDENTIAL']);
+          });
+          $("#legend2-list-2").click(() => {
+            this.renderLayer('data2_metrics2');
+            $(".legend2-describtion").html(legendMapping['NEIGHBORHOOD LAND USE TYPOLOGIES: MIXED-USE']);
+          });
+          $("#legend2-list-3").click(() => {
+            this.renderLayer('data2_metrics3');
+            $(".legend2-describtion").html(legendMapping['INDUSTRIAL LAND USE TYPOLOGIES']);
+          });
+          $("#legend2-list-4").click(() => {
+            this.renderLayer('data2_metrics4');
+            $(".legend2-describtion").html(legendMapping['LANDSCAPE LAND USE TYPOLOGIES']);
+          });
+          $("#legend2-list-5").click(() => {
+            this.renderLayer('data2_metrics5');
+            $(".legend2-describtion").html(null);
+          });
+
+          $("#legend3-list-1").click(() => {
+            this.renderLayer('data3_metrics1');
+            $(".echart-view-data3-title").html('<div>POPULATION: 45,279</div>  <div>MEAN INCOME: $32.652</div>');
+            $(".legend3-describtion").html(legendMapping['GREATER DOWNTOWN']);
+            this.initChart3(23, 32, 5);
+            this.renderChartTitle('HOUSING VACANCY', 'VACANT PARCELS: PUBLICLY OWNED', 'LAND AREA');
+          });
+          $("#legend3-list-2").click(() => {
+            this.renderLayer('data3_metrics2');
+            $(".echart-view-data3-title").html('<div>POPULATION: 254,260</div>   <div>MEAN INCOME: $48.509</div>');
+            $(".legend3-describtion").html(legendMapping['LOW-VACANCY']);
+            this.initChart3(16, 7, 26);
+            this.renderChartTitle('HOUSING VACANCY', 'VACANT PARCELS: PUBLICLY OWNED', 'LAND AREA');
+          });
+          $("#legend3-list-3").click(() => {
+            this.renderLayer('data3_metrics3');
+            $(".echart-view-data3-title").html('<div>POPULATION: 318,140</div>   <div>MEAN INCOME: $35.821</div>');
+            $(".legend3-describtion").html(legendMapping['MODERATE-VACANCY']);
+            this.initChart3(26, 22, 33);
+            this.renderChartTitle('HOUSING VACANCY', 'VACANT PARCELS: PUBLICLY OWNED', 'LAND AREA');
+          });
+          $("#legend3-list-4").click(() => {
+            this.renderLayer('data3_metrics4');
+            $(".echart-view-data3-title").html('<div>POPULATION: 88,255</div>   <div>MEAN INCOME: $28.082</div>');
+            $(".legend3-describtion").html(legendMapping['HIGH-VACANCY']);
+            this.initChart3(30, 56, 17);
+            this.renderChartTitle('HOUSING VACANCY', 'VACANT PARCELS: PUBLICLY OWNED', 'LAND AREA');
+          });
+          $("#legend3-list-5").click(() => {
+            this.renderLayer('data3_metrics5');
+            $(".echart-view-data3-title").html('<div>POPULATION: N/A</div>   <div>MEAN INCOME: N/A</div>');
+            $(".legend3-describtion").html(legendMapping['INDUSTRIAL LAND USE CHANGE']);
+            this.initChart3(47, 32);
+            this.renderChartTitle('VACANT PARCELS: PUBLICLY OWNED', 'VACANT AREA: PUBLICLY OWNED', '');
+          });
+          $("#legend3-list-6").click(() => {
+            this.renderLayer('data3_metrics6');
+            $(".echart-view-data3-title").html('<div>POPULATION: N/A</div>   <div>MEAN INCOME: N/A</div>');
+            $(".legend3-describtion").html(legendMapping['INDUSTRIAL LAND USE STRENGTH']);
+            this.initChart3(44, 21);
+            this.renderChartTitle('VACANT PARCELS: PUBLICLY OWNED', 'VACANT AREA: PUBLICLY OWNED', '');
+          });
+          $("#legend3-list-7").click(() => {
+            this.renderLayer('data3_metrics7');
+            $(".echart-view-data3-title").html(null);
+            $(".legend3-describtion").html(null);
+            this.initChart3();
+            this.renderChartTitle('', '', '');
+
+          });
+          $("#legend3-list-8").click(() => {
+            this.renderLayer('data3_metrics8');
+            $(".echart-view-data3-title").html(null);
+            $(".legend3-describtion").html(null);
+            this.initChart3();
+            this.renderChartTitle('', '', '');
+          });
+
+          $(".data2-type-1").click(() => {
+            $(".data2-type-1").css("background-color", "skyblue");
+            $(".data2-type-2").css("background-color", "#fff");
+            $(".legend2-legend").html("2030 LAND USE VISION");
+            this.dataGeoJsontype = 'F_20Year';
+            this.addLayer(this.dataMetrics);
+          });
+
+          $(".data2-type-2").click(() => {
+            $(".data2-type-1").css("background-color", "#fff");
+            $(".data2-type-2").css("background-color", "skyblue");
+            $(".legend2-legend").html("2050 LAND USE VISION");
+            this.dataGeoJsontype = 'F_50Year';
+            this.addLayer(this.dataMetrics);
+          });
+
+          $(".top1").click(() => {
+            $(".right-wrapper-data2").css("display", "none");
+            $(".right-wrapper-data3").css("display", "block");
+            $(".top1").css("background-color", "skyblue");
+            $(".top2").css("background-color", "#fff");
+            this.removeAllLayer();
+            this.dataType = 'data3';
+            this.dataGeoJsontype = 'ZONE_';
+            this.dataMetrics = this.data3Metrics;
+            this.dataMetricsAll = this.data3MetricsAll;
+            this.data = data3;
+            this.addLayer(this.dataMetrics);
+          });
+
+          $(".top2").click(() => {
+            $(".right-wrapper-data2").css("display", "block");
+            $(".right-wrapper-data3").css("display", "none");
+            $(".top1").css("background-color", "#fff");
+            $(".top2").css("background-color", "skyblue");
+            this.removeAllLayer();
+            this.dataType = 'data2';
+            this.dataGeoJsontype = 'F_20Year';
+            this.dataMetrics = this.data2Metrics;
+            this.dataMetricsAll = this.data2MetricsAll;
+            this.data = data2;
+            this.addLayer(this.dataMetrics);
+          });
+        },
+      };
+      App.init();
+    </script>
+  </body>
+</html>
